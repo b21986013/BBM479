@@ -33,23 +33,17 @@ def extract_image_from_description(html: str) -> str | None:
 
 
 def extract_image(entry):
-    if "media_content" in entry:
-        try:
-            return entry.media_content[0]["url"]
-        except:
-            pass
-
-    if "media_thumbnail" in entry:
-        try:
-            return entry.media_thumbnail[0]["url"]
-        except:
-            pass
-
-    if "enclosures" in entry:
-        try:
-            return entry.enclosures[0].get("url")
-        except:
-            pass
+    if 'media_content' in entry:
+        image_url = entry.media_content[0]['url']
+        return image_url
+    
+    elif 'media_thumbnail' in entry:
+        image_url = entry.media_thumbnail[0]['url']
+        return image_url
+    
+    elif 'enclosures' in entry and len(entry.enclosures) > 0:
+        image_url = entry.enclosures[0]['href']
+        return image_url
     
     if entry.get("image"):
         return entry.get("image")
@@ -69,14 +63,12 @@ def parse_rss_feed(db: Session, source_name: str, rss_url: str, default_category
     for entry in feed.entries:
         title = entry.get("title")
         link = entry.get("link")
-        summary = entry.get("summary")   
-
         if not title or not link:
             continue
-        
+       
+        summary = entry.get("summary")   
         image_url = extract_image(entry)
-
-        # Yayın tarihi
+       
         published_at = None
         if hasattr(entry, "published"):
             try:
@@ -88,7 +80,7 @@ def parse_rss_feed(db: Session, source_name: str, rss_url: str, default_category
         existing = db.query(models.News).filter(models.News.url == link).first()
         if existing:
             continue
-        # Haber objesi
+
         news_obj = schemas.NewsCreate(
             title=title,
             summary=summary,

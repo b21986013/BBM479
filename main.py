@@ -1,28 +1,15 @@
-from fastapi import FastAPI, Depends
-from database import Base, engine, get_db, SessionLocal
+from fastapi import FastAPI
+from database import Base, engine, SessionLocal
 from apscheduler.schedulers.background import BackgroundScheduler
-from routers import news, sources
+from routers import news
 from crawler.rss_reader import run_all_rss_readers
 from datetime import datetime, timedelta
+from contextlib import asynccontextmanager
 import uvicorn
 
-# Tabloları oluştur
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(
-    title="News Aggregation API",
-    description="Multi-source news collector backend",
-    version="1.0.0"
-)
-
 scheduler = BackgroundScheduler()
-
-app.include_router(news.router)
-# app.include_router(sources.router)
-
-@app.get("/")
-def root():
-    return {"message": "News Aggregation Backend is running!"}
 
 def scheduled_rss_job():
     print("[*] Scheduled RSS Job Working…\n")
@@ -35,17 +22,38 @@ def scheduled_rss_job():
 
     print("[✓] Scheduled RSS Job Finished.")
 
-@app.on_event("startup")
-def start_scheduler():
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     scheduler.add_job(
         func=scheduled_rss_job,
         trigger="interval",
         minutes=5,
         id="rss_crawler_job",
         replace_existing=True,
-        next_run_time=datetime.now() + timedelta(seconds=3) 
+        next_run_time=datetime.now() + timedelta(seconds=3)
     )
     scheduler.start()
+    print("Scheduler started")
+    yield
+    scheduler.shutdown()
+    print("Scheduler stopped")
+
+app = FastAPI(
+    title="News Aggregation API",
+    description="Multi-source news collector backend",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+
+app.include_router(news.router)
+
+@app.get("/")
+def root():
+    return {"message": "News Aggregation Backend is running!"}
+
+
 
 # Uygulamayı localhost üzerinde başlat
 if __name__ == "__main__" :

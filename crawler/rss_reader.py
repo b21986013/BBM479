@@ -7,16 +7,104 @@ import requests
 import xml.etree.ElementTree as ET
 
 RSS_SOURCES = [
-    {
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/turkiye/news",
+        "default_category": "turkiye"
+    },
+     {
         "name": "TRT Haber",
-        "url": "https://www.trthaber.com/manset_articles.rss",
-        "default_category": "manşet"
+        "url": "https://www.trthaber.com/turkiye_articles.rss",
+        "default_category": "turkiye"
     },
     {
         "name": "CNN Türk",
-        "url": "https://www.cnnturk.com/feed/rss/all/news",
-        "default_category": "manşet"
+        "url": "https://www.cnnturk.com/feed/rss/dunya/news",
+        "default_category": "dunya"
     },
+    {
+        "name": "TRT Haber",
+        "url": "https://www.trthaber.com/dunya_articles.rss",
+        "default_category": "dunya"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/kultur-sanat/news",
+        "default_category": "kultur-sanat"
+    },
+     {
+        "name": "TRT Haber",
+        "url": "https://www.trthaber.com/kultur_sanat_articles.rss",
+        "default_category": "kultur-sanat"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/bilim-teknoloji/news",
+        "default_category": "bilim-teknoloji"
+    },
+    {
+        "name": "TRT Haber",
+        "url": "https://www.trthaber.com/bilim_teknoloji_articles.rss",
+        "default_category": "bilim-teknoloji"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/yasam/news",
+        "default_category": "yasam"
+    },
+     {
+        "name": "TRT Haber",
+        "url": "https://www.trthaber.com/yasam_articles.rss",
+        "default_category": "yasam"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/magazin/news",
+        "default_category": "magazin"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/saglik/news",
+        "default_category": "saglik"
+    },
+  
+     {
+        "name": "TRT Haber",
+        "url": "https://www.trthaber.com/saglik_articles.rss",
+        "default_category": "saglik"
+    },
+     {
+        "name": "TRT Haber",
+        "url": "https://www.trthaber.com/ekonomi_articles.rss",
+        "default_category": "ekonomi"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/ekonomi/news",
+        "default_category": "ekonomi"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/otomobil/news",
+        "default_category": "otomobil"
+    },
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/seyahat/news",
+        "default_category": "seyahat"
+    },
+   
+     {
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/spor/news",
+        "default_category": "spor"
+    },
+     {
+        "name": "TRT Haber",
+        "url": "https://www.trthaber.com/spor_articles.rss",
+        "default_category": "spor"
+    },
+ 
 ]
 
 def extract_image_from_item_xml(rss_url, link):
@@ -76,16 +164,12 @@ def extract_image(entry, rss_url=None):
     return None
 
 def parse_rss_feed(db: Session, source_name: str, rss_url: str, default_category: str):
-    print(f"[*] Reading RSS feed: {source_name}")
+    print(f"[*] Reading RSS feed: {source_name} - {default_category}")
 
     feed = feedparser.parse(rss_url)
 
     for entry in feed.entries:
-        # if source_name == "CNN Türk":
-        #     print(entry.keys())
-        # if source_name == "TRT Haber":
-        #     print(entry.keys())
-
+ 
 
         title = entry.get("title")
         link = entry.get("link")
@@ -119,7 +203,7 @@ def parse_rss_feed(db: Session, source_name: str, rss_url: str, default_category
 
         crud.create_news(db, news_obj)
 
-    print(f"[✓] {source_name} RSS okuma tamamlandı.\n")
+    print(f"[✓] {source_name} - {default_category} RSS okuma tamamlandı.\n")
 
 
 

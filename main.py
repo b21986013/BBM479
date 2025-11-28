@@ -1,18 +1,17 @@
 from fastapi import FastAPI
 from database import Base, engine, SessionLocal
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from routers import news
 from crawler.rss_reader import run_all_rss_readers
 from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
-import uvicorn
 
 Base.metadata.create_all(bind=engine)
 
-scheduler = BackgroundScheduler()
+scheduler = AsyncIOScheduler()
 
 def scheduled_rss_job():
-    print("[*] Scheduled RSS Job Working…\n")
+    print("[*] Scheduled RSS Job Working…")
 
     db = SessionLocal()
     try:
@@ -31,13 +30,14 @@ async def lifespan(app: FastAPI):
         minutes=5,
         id="rss_crawler_job",
         replace_existing=True,
-        next_run_time=datetime.now() + timedelta(seconds=3)
+        next_run_time=datetime.utcnow() + timedelta(seconds=3)
     )
     scheduler.start()
-    print("Scheduler started")
+    print("Scheduler started in Railway")
     yield
     scheduler.shutdown()
     print("Scheduler stopped")
+
 
 app = FastAPI(
     title="News Aggregation API",
@@ -46,15 +46,8 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-
 app.include_router(news.router)
 
 @app.get("/")
 def root():
-    return {"message": "News Aggregation Backend is running!"}
-
-
-
-# Uygulamayı localhost üzerinde başlat
-if __name__ == "__main__" :
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=False)
+    return {"message": "News Aggregation Backend is running with scheduler!"}

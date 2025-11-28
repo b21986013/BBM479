@@ -11,6 +11,6 @@ class News(Base):
     url = Column(String, unique=True)
     category = Column(String)
     source = Column(String)
-    image_url = Column(String, nullable=True)
+    image_url = Column(String)
     published_at = Column(DateTime)
     created_at = Column(DateTime, server_default=func.now())

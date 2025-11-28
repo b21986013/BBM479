@@ -1,41 +1,82 @@
 import feedparser
+from bs4 import BeautifulSoup
 from datetime import datetime
 from sqlalchemy.orm import Session
 import crud, schemas, models
 
-# Örnek RSS kaynakları — istediğin gibi çoğaltabilirsin
 RSS_SOURCES = [
     {
         "name": "TRT Haber",
-        "url": "https://www.trthaber.com/rss/tumhaber.rss",
-        "default_category": "general"
+        "url": "https://www.trthaber.com/manset_articles.rss",
+        "default_category": "manşet"
     },
     {
-        "name": "NTV",
-        "url": "https://www.ntv.com.tr/son-dakika.rss",
-        "default_category": "general"
+        "name": "CNN Türk",
+        "url": "https://www.cnnturk.com/feed/rss/all/news",
+        "default_category": "manşet"
     },
 ]
 
+def extract_image_from_description(html: str) -> str | None:
+    """
+    RSS <description> içerisindeki HTML'den <img src="..."> URL'sini çıkarır.
+    """
+    if not html:
+        return None
+
+    soup = BeautifulSoup(html, "html.parser")
+    img_tag = soup.find("img")
+    if img_tag and img_tag.get("src"):
+        return img_tag["src"]
+    
+    return None
+
+
+def extract_image(entry):
+    if "media_content" in entry:
+        try:
+            return entry.media_content[0]["url"]
+        except:
+            pass
+
+    if "media_thumbnail" in entry:
+        try:
+            return entry.media_thumbnail[0]["url"]
+        except:
+            pass
+
+    if "enclosures" in entry:
+        try:
+            return entry.enclosures[0].get("url")
+        except:
+            pass
+    
+    if entry.get("image"):
+        return entry.get("image")
+
+    if entry.get("summary"):
+        url = extract_image_from_description(entry["summary"])
+        if url:
+            return url
+
+    return None
 
 def parse_rss_feed(db: Session, source_name: str, rss_url: str, default_category: str):
-    """
-    Tek bir RSS feed'ini okur ve veritabanına kaydeder.
-    """
     print(f"[*] Reading RSS feed: {source_name}")
 
     feed = feedparser.parse(rss_url)
 
     for entry in feed.entries:
-        title = entry.get("title", None)
-        link = entry.get("link", None)
-        summary = entry.get("summary", None)
+        title = entry.get("title")
+        link = entry.get("link")
+        summary = entry.get("summary")   
 
-        # Zorunlu alan kontrolü
         if not title or not link:
             continue
+        
+        image_url = extract_image(entry)
 
-        # Yayın tarihi varsa al
+        # Yayın tarihi
         published_at = None
         if hasattr(entry, "published"):
             try:
@@ -43,19 +84,18 @@ def parse_rss_feed(db: Session, source_name: str, rss_url: str, default_category
             except:
                 pass
 
-        # Duplicate kontrol: URL eşsiz olmalı
+        # Duplicate kontrol
         existing = db.query(models.News).filter(models.News.url == link).first()
         if existing:
             continue
-
-        # Kaydedilecek haber objesi
+        # Haber objesi
         news_obj = schemas.NewsCreate(
             title=title,
             summary=summary,
             url=link,
             category=default_category,
             source=source_name,
-            image_url=None,  # RSS'ten gelmiyorsa sonra eklenebilir
+            image_url=image_url,
             published_at=published_at,
         )
 
@@ -64,12 +104,11 @@ def parse_rss_feed(db: Session, source_name: str, rss_url: str, default_category
     print(f"[✓] {source_name} RSS okuma tamamlandı.\n")
 
 
+
 def run_all_rss_readers(db: Session):
     """
     Tüm RSS kaynaklarını sırayla okur.
     """
-    print("=== RSS Reader Started ===")
-
     for source in RSS_SOURCES:
         parse_rss_feed(
             db=db,
@@ -77,5 +116,3 @@ def run_all_rss_readers(db: Session):
             rss_url=source["url"],
             default_category=source["default_category"]
         )
-
-    print("=== RSS Reader Finished ===\n")

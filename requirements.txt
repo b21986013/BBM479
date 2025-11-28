@@ -1,0 +1,10 @@
+APScheduler==3.11.1
+beautifulsoup4==4.14.2
+fastapi==0.121.3
+feedparser==6.0.12
+psycopg2==2.9.11
+pydantic==2.12.4
+requests==2.32.3
+SQLAlchemy==2.0.44
+uvicorn==0.38.0
+ 

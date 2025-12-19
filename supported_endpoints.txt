@@ -1,0 +1,8 @@
+GET /news
+GET /news/{id}
+GET /news/category/{category}
+GET /news/source/{source}
+GET /news/page/?skip=&limit=
+GET /news/search/?q=
+GET /news/categories
+GET /news/sources

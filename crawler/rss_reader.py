@@ -7,103 +7,103 @@ import requests
 import xml.etree.ElementTree as ET
 
 RSS_SOURCES = [
-     {
-        "name": "CNN Türk",
+    
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/turkiye/news",
         "default_category": "turkiye"
     },
-     {
-        "name": "TRT Haber",
+    {
+        "name": "TRT",
         "url": "https://www.trthaber.com/turkiye_articles.rss",
         "default_category": "turkiye"
     },
     {
-        "name": "CNN Türk",
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/dunya/news",
         "default_category": "dunya"
     },
     {
-        "name": "TRT Haber",
+        "name": "TRT",
         "url": "https://www.trthaber.com/dunya_articles.rss",
         "default_category": "dunya"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/kultur-sanat/news",
         "default_category": "kultur-sanat"
     },
-     {
-        "name": "TRT Haber",
+    {
+        "name": "TRT",
         "url": "https://www.trthaber.com/kultur_sanat_articles.rss",
         "default_category": "kultur-sanat"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/bilim-teknoloji/news",
         "default_category": "bilim-teknoloji"
     },
     {
-        "name": "TRT Haber",
+        "name": "TRT",
         "url": "https://www.trthaber.com/bilim_teknoloji_articles.rss",
         "default_category": "bilim-teknoloji"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/yasam/news",
         "default_category": "yasam"
     },
-     {
-        "name": "TRT Haber",
+    {
+        "name": "TRT",
         "url": "https://www.trthaber.com/yasam_articles.rss",
         "default_category": "yasam"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/magazin/news",
         "default_category": "magazin"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/saglik/news",
         "default_category": "saglik"
     },
-  
-     {
-        "name": "TRT Haber",
+    {
+        "name": "TRT",
         "url": "https://www.trthaber.com/saglik_articles.rss",
         "default_category": "saglik"
     },
-     {
-        "name": "TRT Haber",
+    {
+        "name": "TRT",
         "url": "https://www.trthaber.com/ekonomi_articles.rss",
         "default_category": "ekonomi"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/ekonomi/news",
         "default_category": "ekonomi"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/otomobil/news",
         "default_category": "otomobil"
     },
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/seyahat/news",
         "default_category": "seyahat"
     },
-   
-     {
-        "name": "CNN Türk",
+    {
+        "name": "CNN",
         "url": "https://www.cnnturk.com/feed/rss/spor/news",
         "default_category": "spor"
     },
-     {
-        "name": "TRT Haber",
+    {
+        "name": "TRT",
         "url": "https://www.trthaber.com/spor_articles.rss",
         "default_category": "spor"
-    },
+    }
+
  
 ]
 

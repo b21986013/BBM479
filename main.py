@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     scheduler.add_job(
         func=scheduled_rss_job,
         trigger="interval",
-        minutes=5,
+        minutes=60,
         id="rss_crawler_job",
         replace_existing=True,
         next_run_time=datetime.utcnow() + timedelta(seconds=3)
